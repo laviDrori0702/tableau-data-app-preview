@@ -42,6 +42,20 @@ EXTERNAL = re.compile(r'^(https?:)?//', re.IGNORECASE)
 logger = logging.getLogger("build_preview")
 
 
+def _escape_artifact_chars(text: str) -> str:
+    """Write the characters that the Artifact tool refuses as JS escapes.
+
+    Args:
+        text: JavaScript or JSON source.
+
+    Returns:
+        The source with each raw ESC (U+001B) as '\\u001b' and each U+FFFD as '\\ufffd'.
+    """
+    # Both occur only inside string, regex or template literals (minified bundles hold
+    # them in decode tables), where the escape is the same character.
+    return text.replace("\x1b", "\\u001b").replace("\ufffd", "\\ufffd")
+
+
 def _escape_inline_script(text: str) -> str:
     """Stop inlined code from closing its <script> tag early.
 
@@ -49,10 +63,11 @@ def _escape_inline_script(text: str) -> str:
         text: JavaScript source.
 
     Returns:
-        The source with each '</script' written as '<\\/script' and each '<!--' as '<\\!--'.
+        The source with each '</script' written as '<\\/script', each '<!--' as '<\\!--',
+        and the characters that the Artifact tool refuses written as escapes.
     """
     # '<!--' then '<script' puts the HTML parser in the double-escaped state; '<\!--' is the same JS string.
-    text = text.replace("<!--", "<\\!--")
+    text = _escape_artifact_chars(text.replace("<!--", "<\\!--"))
     return re.sub(r'</script', r'<\\/script', text, flags=re.IGNORECASE)
 
 
@@ -95,7 +110,8 @@ def build_version_page(content_dir: Path, mock_data: dict, stub_js: str) -> str:
     """
     page = _read_asset(content_dir, "index.html")
     # '</' inside the JSON would end the <script> tag; '<\/' is the same JSON string.
-    mock_json = json.dumps(mock_data, ensure_ascii=False).replace("</", "<\\/")
+    # json.dumps already escapes ESC (a control character); U+FFFD stays raw without this.
+    mock_json = _escape_artifact_chars(json.dumps(mock_data, ensure_ascii=False).replace("</", "<\\/"))
 
     deferred_scripts = []  # inline code ignores 'defer', so these move to the end of <body>
 
