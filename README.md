@@ -15,9 +15,70 @@ This skill adds a review loop that costs no Tableau publish.
 - The Artifact tool, to publish the preview page on claude.ai.
 
 ## Install
-Copy this folder to `~/.claude/skills/tableau-data-app-preview/`. On Windows, that is `C:\Users\<you>\.claude\skills\tableau-data-app-preview\`. Then start a new Claude Code session.
+The skill goes in your user-level skills folder, `~/.claude/skills/`. Claude Code then loads it in each project.
 
-Claude starts the skill when it builds or changes a data app. You can also ask: "Preview the data app before you publish."
+### 1. Check the prerequisites
+**Windows (PowerShell)**
+```powershell
+git --version
+python --version
+```
+
+**macOS (Terminal)**
+```bash
+git --version
+python3 --version
+```
+Each command must print a version. Python must be 3.9 or later.
+
+### 2. Clone the skill
+**Windows (PowerShell)**
+```powershell
+git clone https://github.com/laviDrori0702/tableau-data-app-preview.git "$HOME\.claude\skills\tableau-data-app-preview"
+```
+
+**macOS (Terminal)**
+```bash
+git clone https://github.com/laviDrori0702/tableau-data-app-preview.git ~/.claude/skills/tableau-data-app-preview
+```
+`git clone` makes the `skills` folder if it does not exist.
+
+### 3. Verify the install
+**Windows (PowerShell)**
+```powershell
+Test-Path "$HOME\.claude\skills\tableau-data-app-preview\SKILL.md"
+```
+
+**macOS (Terminal)**
+```bash
+test -f ~/.claude/skills/tableau-data-app-preview/SKILL.md && echo True
+```
+Expected output: `True`.
+
+### 4. Start Claude Code
+Start a new Claude Code session. Claude starts the skill when it builds or changes a data app. You can also ask: "Preview the data app before you publish."
+
+### Update
+**Windows (PowerShell)**
+```powershell
+git -C "$HOME\.claude\skills\tableau-data-app-preview" pull
+```
+
+**macOS (Terminal)**
+```bash
+git -C ~/.claude/skills/tableau-data-app-preview pull
+```
+
+### Uninstall
+**Windows (PowerShell)**
+```powershell
+Remove-Item -Recurse -Force "$HOME\.claude\skills\tableau-data-app-preview"
+```
+
+**macOS (Terminal)**
+```bash
+rm -rf ~/.claude/skills/tableau-data-app-preview
+```
 
 ## How it works
 1. Claude reads the queries in `app.js` and gets the datasource metadata. It then writes `<workspace>/mock/mock-data.json`. For personal data (names, pay, customer or health data) it writes fake rows and does not query the real rows.
