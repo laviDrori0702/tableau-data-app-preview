@@ -67,9 +67,13 @@ def _read_asset(content_dir: Path, reference: str) -> str:
         The file text.
 
     Raises:
+        ValueError: If the reference points outside content_dir.
         FileNotFoundError: If the file does not exist.
     """
-    path = content_dir / reference.split("?")[0]
+    path = (content_dir / reference.split("?")[0]).resolve()
+    # Tableau serves only content/, and the page gets published: never inline a file outside it.
+    if not path.is_relative_to(content_dir.resolve()):
+        raise ValueError(f"Asset outside content/ referenced by index.html: {reference}")
     if not path.is_file():
         raise FileNotFoundError(f"Missing asset referenced by index.html: {reference}")
     return path.read_text(encoding="utf-8-sig")  # utf-8-sig drops a BOM (PowerShell 5.1 writes one)
