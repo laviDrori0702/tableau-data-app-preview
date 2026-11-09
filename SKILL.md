@@ -8,6 +8,8 @@ description: Use when a Tableau data app is built or changed with tableau-data-a
 ## Overview
 The stakeholder reviews a mock of the app in a private Claude artifact, one tab per version. Publish to Tableau once, after approval.
 
+`tableau-data-app-authoring` (Tableau plugin 1.1.0) says "There is no local preview". This skill overrides that sentence. The live check after publish (step 5) stays.
+
 ## 1. Capture mock data
 1. Read `app.js`: note each `queryAsync(query)` object and `BOUND_DATASOURCE_ID`.
 2. Get the LUID with `list-datasources`. Run `get-datasource-metadata`.
