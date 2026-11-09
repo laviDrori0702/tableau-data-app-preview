@@ -1,0 +1,17 @@
+{
+  "datasource": { "id": "ds-superstore", "name": "Superstore" },
+  "metadata": [
+    { "fieldCaption": "Category", "fieldName": "Category", "dataType": "STRING" },
+    { "fieldCaption": "Sales", "fieldName": "Sales", "dataType": "REAL" }
+  ],
+  "queries": [
+    {
+      "query": { "fields": [ { "fieldCaption": "Category" } ] },
+      "data": [ { "Category": "Furniture" }, { "Category": "רהיטים" } ]
+    },
+    {
+      "query": { "fields": [ { "fieldCaption": "Sales", "function": "SUM" } ] },
+      "data": [ { "SUM(Sales)": 2297200.86 } ]
+    }
+  ]
+}

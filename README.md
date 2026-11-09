@@ -35,6 +35,19 @@ Claude starts the skill when it builds or changes a data app. You can also ask: 
 
 The script writes only into `<workspace>/mock/`. `package_twbx.py` does not pack that folder.
 
+## Tests
+Run the tests from the skill folder. They need `pytest` and Node.js 18 or later.
+```
+python -m pytest scripts/tests -q
+node scripts/tests/test_tableau_stub.mjs
+```
+One test packages a sample app with the Tableau plugin's `package_twbx.py`. If the plugin is not installed, pytest skips that test.
+
+To run the tests before each commit, enable the hook once per clone:
+```
+git config core.hooksPath .githooks
+```
+
 ## Limits
 - **Mock data only.** The preview does not show the Tableau sandbox rules, the worksheet size, or the trust prompt. Claude checks the live app once after publish.
 - **The stub mocks only these calls:** `initializeAsync`, `workbook.getAllDataSourcesAsync`, `worksheetContent.worksheet.getDataSourcesAsync`, `readMetadataAsync` and `queryAsync`. Calls such as `settings`, `getSummaryDataAsync` and worksheet events are not mocked.
